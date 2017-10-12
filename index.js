@@ -1,6 +1,8 @@
 var http = require('http'),
-	puppeteer = require('puppeteer');
+	puppeteer = require('puppeteer'),
+	port = process.env.PORT || 3000;
 
+console.log( 'Starting server at http://localhost:' + port );
 http.createServer(function(req,res){
 	(async () => {
 		var browser = await puppeteer.launch(),
@@ -47,4 +49,4 @@ http.createServer(function(req,res){
 		await browser.close();
 
 	})();
-}).listen(8081);
+}).listen(port);
