@@ -25,22 +25,23 @@ http.createServer(function(req,res){
 		}
 
 		console.log('Fetching: ' + screenshotUrl);
-		await page.goto(screenshotUrl).catch(function(){
-			msg = 'Could not goto URL.';
-			console.log(msg);
-			res.writeHead(500);
-			res.write(msg);
-			res.end();
-		});
-		await page.screenshot({
-			fullPage: true,
-		}).then(function(buffer){
-			console.log('Serving screenshot.');
-			res.writeHead(200,{'Content-Type': 'image/png'});
-			res.write(buffer);
-			res.end();
+		await page.goto(screenshotUrl).then( async () => {
+			await page.screenshot({
+				fullPage: true,
+			}).then(function(buffer){
+				console.log('Serving screenshot.');
+				res.writeHead(200,{'Content-Type': 'image/png'});
+				res.write(buffer);
+				res.end();
+			}).catch(function(){
+				msg = 'Error capturing screenshot.';
+				console.log(msg);
+				res.writeHead(500);
+				res.write(msg);
+				res.end();
+			});
 		}).catch(function(){
-			msg = 'Error capturing screenshot.';
+			msg = 'Could not goto URL.';
 			console.log(msg);
 			res.writeHead(500);
 			res.write(msg);
