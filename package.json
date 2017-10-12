@@ -1,0 +1,8 @@
+{
+  "name": "puppet-stage",
+  "version": "0.0.0",
+  "description": "Simple screenshots using Chrome Puppeteer",
+  "main": "index.js",
+  "author": "Daniel Bachhuber <daniel@handbuilt.co>",
+  "license": "MIT"
+}
