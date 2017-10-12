@@ -5,7 +5,16 @@ var http = require('http'),
 console.log( 'Starting server at http://localhost:' + port );
 http.createServer(function(req,res){
 	(async () => {
-		var browser = await puppeteer.launch(),
+		var launchArgs = {};
+		if ( process.env.PPB_LAUNCH_CHROME_INSECURE ) {
+			launchArgs = {
+				args: [
+					'--no-sandbox',
+					'--disable-setuid-sandbox'
+		        ]
+			};
+		}
+		var browser = await puppeteer.launch( launchArgs ),
 			page = await browser.newPage(),
 			screenshotUrl = req.url.replace(/^[\/]+/, '');
 
