@@ -5,6 +5,8 @@ Simple screenshots using [Chrome Puppeteer](https://github.com/GoogleChrome/pupp
 
 Fetches a provided URL using Chrome's headless browser and returns a full-page PNG if the request was successful.
 
+Try it out: https://puppet-photo-booth.herokuapp.com/wordpress.org
+
 ## Getting Started
 
 ### Installing
