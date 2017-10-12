@@ -1,6 +1,6 @@
 var http = require('http'),
 	puppeteer = require('puppeteer'),
-	port = process.env.PORT || 3000;
+	port = process.env.PORT || 8080;
 
 console.log( 'Starting server at http://localhost:' + port );
 http.createServer(function(req,res){
