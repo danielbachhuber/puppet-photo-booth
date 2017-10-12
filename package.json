@@ -4,5 +4,8 @@
   "description": "Simple screenshots using Chrome Puppeteer",
   "main": "index.js",
   "author": "Daniel Bachhuber <daniel@handbuilt.co>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer": "^0.11.0"
+  }
 }
