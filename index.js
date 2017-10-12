@@ -32,12 +32,16 @@ http.createServer(function(req,res){
 		}
 
 		console.log('Fetching: ' + screenshotUrl);
-		await page.goto(screenshotUrl).then( async () => {
+		await page.goto(screenshotUrl).then( async ( screenshotRes ) => {
 			await page.screenshot({
 				fullPage: true,
 			}).then(function(buffer){
 				console.log('Serving screenshot.');
-				res.writeHead(200,{'Content-Type': 'image/png'});
+				res.writeHead(200,{
+					'Content-Type': 'image/png',
+					'X-PPB-URL': screenshotRes.url,
+					'X-PPB-Status-Code': screenshotRes.status,
+				});
 				res.write(buffer);
 				res.end();
 			}).catch(function(){
