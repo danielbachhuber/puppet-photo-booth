@@ -24,6 +24,13 @@ http.createServer(function(req,res){
 			return;
 		}
 
+		if ( 'http://' !== screenshotUrl.substr(0,7)
+			&& 'https://' !== screenshotUrl.substr(0,8) ) {
+			var oldScreenshotUrl = screenshotUrl;
+			screenshotUrl = 'http://' + screenshotUrl;
+			console.log( 'Corrected ' + oldScreenshotUrl + ' to ' + screenshotUrl );
+		}
+
 		console.log('Fetching: ' + screenshotUrl);
 		await page.goto(screenshotUrl).then( async () => {
 			await page.screenshot({
