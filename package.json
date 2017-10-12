@@ -1,5 +1,5 @@
 {
-  "name": "puppet-stage",
+  "name": "puppet-photo-booth",
   "version": "0.0.0",
   "description": "Simple screenshots using Chrome Puppeteer",
   "main": "index.js",
