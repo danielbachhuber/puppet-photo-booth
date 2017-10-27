@@ -5,29 +5,36 @@ Simple screenshots using [Chrome Puppeteer](https://github.com/GoogleChrome/pupp
 
 Fetches a provided URL using Chrome's headless browser and returns a full-page PNG if the request was successful.
 
-Try it out: https://puppet-photo-booth.herokuapp.com/wordpress.org
-
 ## Getting Started
 
 ### Installing
 
-Using Docker:
+Using a Docker container at `http://localhost:49160`:
 
-    $ docker pull danielbachhuber/puppet-photo-booth
-    # Run the container on port 49160
-    $ docker run -p 49160:8080 -d danielbachhuber/puppet-photo-booth
+    docker pull danielbachhuber/puppet-photo-booth
+    docker run -p 49160:8080 -d danielbachhuber/puppet-photo-booth
 
-Using node on your local machine:
+Using node installed on your local machine at `http://localhost:8080`:
 
-    $ git clone https://github.com/danielbachhuber/puppet-photo-booth.git
-    $ cd puppet-photo-booth
-    $ yarn install
-    $ yarn start
+    git clone https://github.com/danielbachhuber/puppet-photo-booth.git
+    cd puppet-photo-booth
+    yarn install
+    yarn start
 
 ### Using
 
-Simply append the URL you'd like to screenshot.
+puppet-photo-booth implements a simple HTTP API.
 
-If PPB is running on `localhost:8080`, the full URL would be `http://localhost:8080/wordpress.org`.
+**/v1/fetch**
 
-It may take a few seconds to load — because it's making a request to the URL you've specified.
+The fetch endpoint generates a screenshot of a provided URL. See it in action:
+
+    https://puppet-photo-booth.herokuapp.com/v1/fetch?url=wordpress.org
+
+It supports these arguments:
+
+ * `url` (required): Generate a screenshot of this URL.
+ * `width`: Simulated browser width for the screenshot. Default is 1024.
+ * `format`: Render screenshot as 'png' or 'jpeg'. Default is 'png'.
+
+Response time may vary, depending on how long the target page takes to load.
