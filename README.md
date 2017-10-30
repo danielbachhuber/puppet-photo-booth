@@ -25,6 +25,18 @@ Using node installed on your local machine at `http://localhost:8080`:
 
 puppet-photo-booth implements a simple HTTP API.
 
+**/v1/compare**
+
+The compare endpoint quantifies the difference between two images. See it in action:
+
+    https://puppet-photo-booth.herokuapp.com/v1/compare?image=https%3A%2F%2Fuser-images.githubusercontent.com%2F36432%2F32178727-b5054352-bd4a-11e7-8355-f9e57e27aba3.jpg&image=https%3A%2F%2Fuser-images.githubusercontent.com%2F36432%2F32178731-b766c9b8-bd4a-11e7-8a0c-f6e7a17fc6d6.jpg
+
+It supports these arguments:
+
+ * `image` (required x2): Two image URLs to compare.
+
+It responds with a JSON blob of comparison data.
+
 **/v1/fetch**
 
 The fetch endpoint generates a screenshot of a provided URL. See it in action:
