@@ -11,6 +11,9 @@ RUN apt-get update && apt-get install -y wget --no-install-recommends \
     && apt-get purge --auto-remove -y curl \
     && rm -rf /src/*.deb
 
+# Install ImageMagick
+RUN apt-get install -y imagemagick libmagickcore-dev libmagickwand-dev --no-install-recommends && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /usr/src/app
 
 COPY package.json .
