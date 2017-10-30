@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "puppeteer": "^0.11.0",
-    "query-string": "^5.0.1"
+    "query-string": "^5.0.1",
+    "superagent": "^3.8.0",
+    "superagent-binary-parser": "^1.0.1",
+    "tempy": "^0.2.1"
   }
 }
