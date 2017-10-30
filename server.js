@@ -60,7 +60,9 @@ var compareEndpoint = (async (req, res) => {
 		}
 		var comparison = stdout || stderr;
 		console.log( 'Comparison: ' + comparison );
-		res.writeHead(200);
+		res.writeHead(200,{
+			'Content-Type': 'application/json',
+		});
 		res.write(JSON.stringify({
 			comparison: comparison,
 		}));
