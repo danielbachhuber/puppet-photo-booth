@@ -43,8 +43,7 @@ var compareEndpoint = (async (req, res) => {
 	await asyncDownload(imageUrls[0], imageA);
 	await asyncDownload(imageUrls[1], imageB);
 
-	execFile('magick',[
-		'compare',
+	execFile('compare',[
 		'-metric',
 		'mae',
 		imageA,
