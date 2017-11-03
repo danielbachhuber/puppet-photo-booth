@@ -19,8 +19,9 @@ var errorResponse = (res, code, msg = '') => {
 
 var compareEndpoint = (async (req, res) => {
 	var queryArgs = queryString.parse(queryString.extract(req.url)),
-		imageUrls = queryArgs.image || [];
-	if ( 0 === imageUrls.length || imageUrls.length > 2 ) {
+		imageA = queryArgs.imageA || false,
+		imageB = queryArgs.imageB || false;
+	if ( ! imageA || ! imageB ) {
 		errorResponse(res, 400, 'Please provide two images');
 		return;
 	}
@@ -36,25 +37,25 @@ var compareEndpoint = (async (req, res) => {
 		fs.writeFileSync(dest, response.body);
 	});
 
-	var imageA = tempy.file(),
-		imageB = tempy.file(),
+	var imageAlocal = tempy.file(),
+		imageBlocal = tempy.file(),
 		compareImage = tempy.file();
 
-	await asyncDownload(imageUrls[0], imageA);
-	await asyncDownload(imageUrls[1], imageB);
+	await asyncDownload(imageA, imageAlocal);
+	await asyncDownload(imageB, imageBlocal);
 
 	execFile('compare',[
 		'-metric',
 		'mae',
-		imageA,
-		imageB,
+		imageAlocal,
+		imageBlocal,
 		compareImage,
 	],(error, stdout, stderr)=>{
-		fs.unlink(imageA,()=>{});
-		fs.unlink(imageB,()=>{});
+		fs.unlink(imageAlocal,()=>{});
+		fs.unlink(imageBlocal,()=>{});
 		fs.unlink(compareImage,()=>{});
 		// ImageMagick uses 1 to denote comparison failure :(
-		if ( error.code > 1 ) {
+		if ( error && error.code > 1 ) {
 			errorResponse(res, 500, stderr);
 			return;
 		}
@@ -63,8 +64,13 @@ var compareEndpoint = (async (req, res) => {
 		res.writeHead(200,{
 			'Content-Type': 'application/json',
 		});
+		comparison = comparison.match(/\(([\d\.]+)\)/)[1];
+		var percentDiff = comparison * 100;
+		console.log( 'percentDiff: ' + percentDiff );
 		res.write(JSON.stringify({
-			comparison: comparison,
+			imageA: imageA,
+			imageB: imageB,
+			percentDiff: percentDiff,
 		}));
 		res.end();
 	});
