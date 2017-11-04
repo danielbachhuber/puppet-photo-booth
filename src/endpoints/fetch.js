@@ -27,7 +27,7 @@ var fetchEndpoint = (async (req, res) => {
 	var queryArgs = queryString.parse(queryString.extract(req.url)),
 		screenshotUrl = queryArgs.url || '',
 		screenshotWidth = queryArgs.width || 1024,
-		screenshotFormat = queryArgs.format || 'png';
+		screenshotFormat = queryArgs.format || 'jpeg';
 
 	if ( ! screenshotUrl.length ) {
 		errorResponse(res, 400, 'Invalid URL specified.');
