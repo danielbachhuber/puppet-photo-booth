@@ -1,7 +1,12 @@
 var compareEndpoint = require('./src/endpoints/compare'),
 	fetchEndpoint = require('./src/endpoints/fetch'),
+	fs = require('fs'),
 	http = require('http'),
 	port = process.env.PORT || 8080;
+
+if (fs.existsSync('./.env')) {
+	require('dotenv').config();
+}
 
 console.log( 'Starting server at http://localhost:' + port );
 http.createServer(function(req,res){

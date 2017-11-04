@@ -1,5 +1,17 @@
-var puppeteer = require('puppeteer'),
-	queryString = require('query-string');
+var aws = require('aws-sdk'),
+	crypto = require('crypto'),
+	{ errorResponse } = require('../utils' ),
+	moment = require('moment'),
+	puppeteer = require('puppeteer'),
+	queryString = require('query-string'),
+	url = require('url');
+
+var serveScreenshot = (res, buffer, headers) => {
+	console.log('Serving screenshot.');
+	res.writeHead(200, headers);
+	res.write(buffer);
+	res.end();
+}
 
 var fetchEndpoint = (async (req, res) => {
 	var launchArgs = {};
@@ -15,24 +27,16 @@ var fetchEndpoint = (async (req, res) => {
 	var queryArgs = queryString.parse(queryString.extract(req.url)),
 		screenshotUrl = queryArgs.url || '',
 		screenshotWidth = queryArgs.width || 1024,
-		screenshotFormat = queryArgs.format || 'png';
+		screenshotFormat = queryArgs.format || 'jpeg';
 
 	if ( ! screenshotUrl.length ) {
-		msg = 'Invalid URL specified.';
-		console.log(msg);
-		res.writeHead(400);
-		res.write(msg);
-		res.end();
+		errorResponse(res, 400, 'Invalid URL specified.');
 		return;
 	}
 
 	screenshotFormat = screenshotFormat.toLowerCase();
 	if ( -1 === ['jpeg','png'].indexOf(screenshotFormat) ) {
-		msg = 'Invalid format specified.';
-		console.log(msg);
-		res.writeHead(400);
-		res.write(msg);
-		res.end();
+		errorResponse(res, 400, 'Invalid format specified.');
 		return;
 	}
 
@@ -56,28 +60,49 @@ var fetchEndpoint = (async (req, res) => {
 		await page.screenshot({
 			fullPage: true,
 			type: screenshotFormat,
-		}).then(function(buffer){
-			console.log('Serving screenshot.');
-			res.writeHead(200,{
-				'Content-Type': 'image/' + screenshotFormat,
-				'X-PPB-URL': screenshotRes.url,
+		}).then( async (buffer) => {
+			var contentType = 'image/' + screenshotFormat;
+			var headers = {
+				'Content-Type': contentType,
+				'X-PPB-Source-URL': screenshotRes.url,
 				'X-PPB-Status-Code': screenshotRes.status,
-			});
-			res.write(buffer);
-			res.end();
-		}).catch(function(){
-			msg = 'Error capturing screenshot.';
-			console.log(msg);
-			res.writeHead(500);
-			res.write(msg);
-			res.end();
+			};
+			if ( process.env.AWS_S3_BUCKET
+				&& process.env.AWS_ACCESS_KEY_ID
+				&& process.env.AWS_SECRET_ACCESS_KEY ) {
+				console.log('Uploading to Amazon S3');
+				var bucket = process.env.AWS_S3_BUCKET;
+				var region = process.env.AWS_S3_REGION || 'us-west-1';
+				var filename = url.parse(screenshotUrl).hostname.replace('.', '-')
+					+ '-' + moment().format('YYYY-MM-DD-HH-mm-ss')
+					+ '-' + crypto.randomBytes(64).toString('hex').substr(0, 8)
+					+ '.' + screenshotFormat;
+				var s3 = new aws.S3({
+					region: region
+				});
+				s3.putObject({
+					Bucket: process.env.AWS_S3_BUCKET,
+					Body: buffer,
+					Key: filename,
+					ContentType: contentType,
+					ACL: 'public-read'
+				},( error, data ) => {
+					if ( error ) {
+						errorResponse(res, 500, 'Error uploading to S3' );
+					} else {
+						headers['X-PPB-Screenshot-URL'] = 'https://s3-' + region + '.amazonaws.com/' + bucket + '/' + filename;
+						serveScreenshot(res, buffer, headers);
+					}
+				});
+			} else {
+				serveScreenshot(res, buffer, headers);
+			}
+		}).catch(function( error ){
+			console.log( error );
+			errorResponse(res, 500, 'Error capturing screenshot.');
 		});
 	}).catch(function(){
-		msg = 'Could not goto URL.';
-		console.log(msg);
-		res.writeHead(500);
-		res.write(msg);
-		res.end();
+		errorResponse(res, 500, 'Could not goto URL.');
 	});
 	await browser.close();
 });
