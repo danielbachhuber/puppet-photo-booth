@@ -50,4 +50,10 @@ It supports these arguments:
  * `width`: Simulated browser width for the screenshot. Default is 1024.
  * `format`: Render screenshot as 'png' or 'jpeg'. Default is 'png'.
 
-Response time may vary, depending on how long the target page takes to load.
+Response time may vary, depending on how long the target page takes to load. In addition to the screenshot binary data, the response includes these headers:
+
+* `X-PPB-Source-URL`: Original source URL fetched.
+* `X-PPB-Status-Code`: HTTP status code observed when fetching source URL.
+* `X-PPB-Screenshot-URL` (optional): URL for the uploaded screenshot, if configured.
+
+To automatically upload screenshots to AWS S3, you'll need to set the `AWS_S3_BUCKET`, `AWS_ACCESS_KEY_ID`, and `AWS_SECRET_ACCESS_KEY` environment variables. `AWS_S3_REGION` can also be set and defaults to `us-west-1`.
