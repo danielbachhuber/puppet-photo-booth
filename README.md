@@ -21,6 +21,13 @@ Using node installed on your local machine at `http://localhost:8080`:
     yarn install
     yarn start
 
+To automatically upload screenshots to S3, you'll need to set these environment variables:
+
+ * `AWS_S3_BUCKET` - Name of the S3 bucket.
+ * `AWS_ACCESS_KEY_ID` - Access key ID for the IAM user with write access to the S3 bucket.
+ * `AWS_SECRET_ACCESS_KEY` - Secret access key for the IAM user with write access to the S3 bucket.
+ * `AWS_S3_REGION` (optional) - Region of the S3 bucket. Defaults to 'us-west-1'.
+
 ### Using
 
 puppet-photo-booth implements a simple HTTP API.
@@ -56,4 +63,3 @@ Response time may vary, depending on how long the target page takes to load. In 
 * `X-PPB-Status-Code`: HTTP status code observed when fetching source URL.
 * `X-PPB-Screenshot-URL` (optional): URL for the uploaded screenshot, if configured.
 
-To automatically upload screenshots to AWS S3, you'll need to set the `AWS_S3_BUCKET`, `AWS_ACCESS_KEY_ID`, and `AWS_SECRET_ACCESS_KEY` environment variables. `AWS_S3_REGION` can also be set and defaults to `us-west-1`.
