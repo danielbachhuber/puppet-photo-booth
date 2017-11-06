@@ -74,7 +74,7 @@ var fetchEndpoint = (async (req, res) => {
 				var bucket = process.env.AWS_S3_BUCKET;
 				var region = process.env.AWS_S3_REGION || 'us-west-1';
 				var filename = url.parse(screenshotUrl).hostname.replace('.', '-')
-					+ '-' + moment().format('YYYY-MM-DD-HH-mm-ss')
+					+ '-' + moment.utc().format('YYYY-MM-DD-HH-mm-ss')
 					+ '-' + crypto.randomBytes(64).toString('hex').substr(0, 8)
 					+ '.' + screenshotFormat;
 				var s3 = new aws.S3({
