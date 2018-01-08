@@ -43,7 +43,9 @@ It supports these arguments:
  * `imageA` (required): First image to compare.
  * `imageB` (required): Second image to compare.
 
-It responds with a JSON blob of comparison data.
+It responds with the comparison image as binary data, along with these headers:
+
+* `X-PPB-Percent-Diff`: Percentage difference between the two images.
 
 **/v1/fetch**
 
