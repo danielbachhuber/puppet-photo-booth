@@ -33,6 +33,12 @@ var compareEndpoint = (async (req, res) => {
 	await asyncDownload(imageA, imageAlocal);
 	await asyncDownload(imageB, imageBlocal);
 
+	var unlinkImages = () => {
+		fs.unlink(imageAlocal,()=>{});
+		fs.unlink(imageBlocal,()=>{});
+		fs.unlink(compareImage,()=>{});
+	}
+
 	execFile('compare',[
 		'-metric',
 		'mae',
@@ -40,28 +46,24 @@ var compareEndpoint = (async (req, res) => {
 		imageBlocal,
 		compareImage,
 	],(error, stdout, stderr)=>{
-		fs.unlink(imageAlocal,()=>{});
-		fs.unlink(imageBlocal,()=>{});
-		fs.unlink(compareImage,()=>{});
 		// ImageMagick uses 1 to denote comparison failure :(
 		if ( error && error.code > 1 ) {
+			unlinkImages();
 			errorResponse(res, 500, stderr);
 			return;
 		}
 		var comparison = stdout || stderr;
 		console.log( 'Comparison: ' + comparison );
-		res.writeHead(200,{
-			'Content-Type': 'application/json',
-		});
 		comparison = comparison.match(/\(([\d\.]+)\)/)[1];
 		var percentDiff = comparison * 100;
 		console.log( 'percentDiff: ' + percentDiff );
-		res.write(JSON.stringify({
-			imageA: imageA,
-			imageB: imageB,
-			percentDiff: percentDiff,
-		}));
+		res.writeHead(200,{
+			'Content-Type': 'image/png',
+			'X-PPB-Percent-Diff': percentDiff
+		});
+		res.write( fs.readFileSync( compareImage ) );
 		res.end();
+		unlinkImages();
 	});
 });
 
