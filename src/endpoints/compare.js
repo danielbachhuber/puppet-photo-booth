@@ -54,7 +54,12 @@ var compareEndpoint = (async (req, res) => {
 		}
 		var comparison = stdout || stderr;
 		console.log( 'Comparison: ' + comparison );
-		comparison = comparison.match(/\(([\d\.]+)\)/)[1];
+		comparison = comparison.match(/\(([\d\.]+)\)/);
+		if ( null !== comparison ) {
+			comparison = comparison[1];
+		} else {
+			comparison = 0;
+		}
 		var percentDiff = comparison * 100;
 		console.log( 'percentDiff: ' + percentDiff );
 		res.writeHead(200,{
