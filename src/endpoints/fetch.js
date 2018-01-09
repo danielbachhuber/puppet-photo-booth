@@ -56,7 +56,9 @@ var fetchEndpoint = (async (req, res) => {
 	});
 
 	console.log('Fetching: ' + screenshotUrl);
-	await page.goto(screenshotUrl).then( async ( screenshotRes ) => {
+	await page.goto(screenshotUrl,{
+		waitUntil: ['load', 'domcontentloaded' ],
+	}).then( async ( screenshotRes ) => {
 		await page.screenshot({
 			fullPage: true,
 			type: screenshotFormat,
