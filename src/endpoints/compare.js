@@ -30,8 +30,17 @@ var compareEndpoint = (async (req, res) => {
 		imageBlocal = tempy.file(),
 		compareImage = tempy.file();
 
-	await asyncDownload(imageA, imageAlocal);
-	await asyncDownload(imageB, imageBlocal);
+	var errored = false;
+	await asyncDownload(imageA, imageAlocal).catch(() => {
+		errored = true;
+	});
+	await asyncDownload(imageB, imageBlocal).catch(() => {
+		errored = true;
+	});;
+	if ( errored ) {
+		errorResponse(res, 400, 'Error downloading images');
+		return;
+	}
 
 	var unlinkImages = () => {
 		fs.unlink(imageAlocal,()=>{});
